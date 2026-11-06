@@ -1,0 +1,14 @@
+# How messages are laid out in code, around what the writer writes.
+
+list_chance = 0.3             # an offer of two or more times is written as a list, one time per line
+blank_line_after_list = 0.5   # and a closing line after the list follows a blank line
+paragraph_chance = 0.35       # a long message is written in paragraphs
+paragraph_min_words = 18      # "long": a word limit at least this
+mention_chance = 0.12         # a player's first message @-mentions the opponent (@**name**)
+
+# What starts each line of a list, by weight ("" is a plain line).
+[bullets]
+"" = 3
+"- " = 3
+"* " = 1
+"• " = 2

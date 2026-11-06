@@ -1,0 +1,8 @@
+# Settings per framing (the files in framings/). `noise_chance`: how often a
+# message gets typing noise in code (see noise.toml); `temperature`: the range
+# the writer's sampling temperature is drawn from.
+
+plain = { noise_chance = 0.1, temperature = [0.8, 1.15] }
+roleplay = { noise_chance = 0.1, temperature = [0.8, 1.15] }
+people = { noise_chance = 0.1, temperature = [0.8, 1.15] }
+messy = { noise_chance = 0.35, temperature = [0.8, 1.15] }

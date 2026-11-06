@@ -1,0 +1,22 @@
+# Scheduling effort rules, per league.
+#
+# Within `window_hours` of the pairing being published, a player meets the rule
+# by accepting one of the opponent's offers, or by offering a set of times with
+# at least `min_times` times, pairwise at least `min_gap_hours` apart, spread
+# over at least `min_days` UTC calendar days. A range at least
+# `range_counts_twice_hours` long counts as two times. Offers withdrawn, and
+# acceptances taken back, by the cutoff don't count.
+
+[team4545]
+window_hours = 24
+min_times = 3
+min_days = 2
+min_gap_hours = 2
+range_counts_twice_hours = 2
+
+[lonewolf]
+window_hours = 24
+min_times = 2
+min_days = 2
+min_gap_hours = 0
+range_counts_twice_hours = 2

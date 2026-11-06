@@ -1,0 +1,1 @@
+Write a few quick messages between two people in a chess league's chat who need to pick a time for their game. They are strangers but friendly, a bit distracted, and type like they talk. Some reply in two words, some ramble; nobody writes like an email.
