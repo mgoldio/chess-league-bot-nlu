@@ -1,0 +1,184 @@
+# Who the players are. Each thread gives white and black one persona each.
+# `short` is what each line of the writer's plan calls them; `description` is
+# the full persona; `words` is the range a message's length limit is drawn from
+# (words besides any times).
+
+[[persona]]
+short = "terse"
+description = "terse; replies in a few words, no greetings"
+words = [3, 8]
+
+[[persona]]
+short = "chatty and friendly"
+description = "chatty and friendly; small talk before getting to the point"
+words = [15, 40]
+
+[[persona]]
+short = "types in all lowercase with almost no punctuation"
+description = "types in all lowercase with almost no punctuation"
+words = [5, 20]
+
+[[persona]]
+short = "uses lots of emoji"
+description = "uses lots of emoji"
+words = [5, 20]
+
+[[persona]]
+short = "makes frequent typos and doesn't correct them"
+description = "makes frequent typos and doesn't correct them"
+words = [5, 20]
+
+[[persona]]
+short = "formal and polite, full sentences"
+description = "formal and polite, full sentences"
+words = [10, 25]
+
+[[persona]]
+short = "busy parent who mentions kids and work constraints"
+description = "busy parent who mentions kids and work constraints"
+words = [8, 25]
+
+[[persona]]
+short = "university student with an unpredictable schedule"
+description = "university student with an unpredictable schedule"
+words = [5, 20]
+
+[[persona]]
+short = "night owl who prefers late games"
+description = "night owl who prefers late games"
+words = [5, 15]
+
+[[persona]]
+short = "a little anxious, apologizes a lot"
+description = "a little anxious, apologizes a lot"
+words = [8, 25]
+
+[[persona]]
+short = "sarcastic but good-natured"
+description = "sarcastic but good-natured"
+words = [5, 20]
+
+[[persona]]
+short = "competitive, talks about wanting a good game"
+description = "competitive, talks about wanting a good game"
+words = [5, 20]
+
+[[persona]]
+short = "non-native English speaker"
+description = "non-native English speaker; simple grammar, occasional odd word choice"
+words = [5, 15]
+
+[[persona]]
+short = "uses abbreviations like tmrw, thx, np, gl"
+description = "uses abbreviations like tmrw, thx, np, gl"
+words = [3, 12]
+
+[[persona]]
+short = "writes long run-on messages"
+description = "writes long run-on messages"
+words = [20, 45]
+
+[[persona]]
+short = "brisk and organized, lists options clearly"
+description = "brisk and organized, lists options clearly"
+words = [5, 15]
+
+[[persona]]
+short = "forgetful"
+description = "forgetful; sometimes asks a question that was already answered"
+words = [5, 20]
+
+[[persona]]
+short = "laid-back, says 'whatever works' a lot but still gives specifics when asked"
+description = "laid-back, says 'whatever works' a lot but still gives specifics when asked"
+words = [5, 15]
+
+[[persona]]
+short = "older player, writes like an email"
+description = "older player, writes like an email"
+words = [15, 40]
+
+[[persona]]
+short = "mixes in chess banter and jokes about openings"
+description = "mixes in chess banter and jokes about openings"
+words = [8, 25]
+
+[[persona]]
+short = "tidy organizer who writes every time in UTC and lays options out clearly"
+description = "tidy organizer; full sentences, UTC times, options laid out clearly"
+words = [10, 30]
+
+[[persona]]
+short = "friendly, writes a greeting, the substance, then a closing line"
+description = "friendly and structured: greeting line, the substance, a closing line"
+words = [18, 40]
+
+[[persona]]
+short = "lives far from Europe and keeps mentioning the time difference"
+description = "lives far from Europe (Australia, Asia or the Americas) and keeps mentioning the time difference"
+words = [10, 30]
+
+[[persona]]
+short = "shift worker whose free time changes week to week"
+description = "shift worker whose free time changes week to week"
+words = [8, 25]
+
+[[persona]]
+short = "parent of a baby, explains bedtimes and nap schedules"
+description = "parent of a baby; explains bedtimes and naps"
+words = [10, 30]
+
+[[persona]]
+short = "student in exam season"
+description = "student in exam season, short on time"
+words = [5, 20]
+
+[[persona]]
+short = "one-word replier"
+description = "replies in one or two words whenever possible"
+words = [2, 5]
+
+[[persona]]
+short = "uses all caps for excitement"
+description = "enthusiastic; uses caps and exclamation marks for excitement"
+words = [5, 18]
+
+[[persona]]
+short = "Spanish or Portuguese speaker writing English"
+description = "Spanish or Portuguese speaker writing English; occasional literal translations"
+words = [6, 20]
+
+[[persona]]
+short = "German speaker writing English"
+description = "German speaker writing English; formal-ish, occasional German word order"
+words = [6, 20]
+
+[[persona]]
+short = "Indian English speaker"
+description = "Indian English speaker; uses phrases like 'kindly' or 'do let me know' now and then"
+words = [8, 22]
+
+[[persona]]
+short = "self-deprecating about their chess"
+description = "self-deprecating about their chess, jokes about blundering"
+words = [8, 25]
+
+[[persona]]
+short = "very polite, thanks a lot"
+description = "very polite; thanks the opponent in most messages"
+words = [8, 25]
+
+[[persona]]
+short = "replies late and apologizes for it"
+description = "often replies late and apologizes for the slow reply"
+words = [8, 25]
+
+[[persona]]
+short = "writes several short paragraphs"
+description = "writes several short paragraphs, each a sentence or two"
+words = [25, 50]
+
+[[persona]]
+short = "matter-of-fact captain type who mentions scheduling the game on the site"
+description = "matter-of-fact; says who will schedule the game on the site"
+words = [6, 18]

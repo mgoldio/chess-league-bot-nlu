@@ -1,0 +1,34 @@
+# The last targeted set: a short decline naming only the day, then a counter, in one message
+# ("can't do sat. sun 14:00?"), times picked in a range or after an open start, withdrawals,
+# and plain offers answered with a short yes, so the targeted sets don't crowd those out.
+# Sized for about 25 minutes of generation ("g5-").
+
+[output]
+directory = "data/gaps-5"
+prefix = "g5-"
+
+[threads]
+count = 550
+seed = 51
+attempts = 3
+others = 0.2
+
+[threads.weights]
+decline_day_counter = 12
+range = 6
+range_pick = 4
+withdrawn = 4
+withdraw_then_accept = 3
+withdraw_after_reply = 3
+withdraw_and_add = 3
+withdraw_unanswered = 3
+quick = 8
+terse_yes = 6
+
+[commands]
+count = 0
+seed = 52
+batch = 6
+
+[review]
+sample = 40

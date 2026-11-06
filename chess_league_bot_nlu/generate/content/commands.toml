@@ -1,0 +1,191 @@
+# How the generator plans messages to the bot. Intents themselves (their labels
+# and descriptions) are in chess_league_bot_nlu/intents.toml.
+#
+# Arguments: each is included with probability `chance`; `values` names a list
+# in vocabulary.toml, or "players" for a generated username.
+
+none_share = 0.3   # share of messages that are not commands
+
+# How often a command is picked, relative to 1 for those not listed: the ones
+# arboters answers today are asked for more.
+intent_weights = { tell = 3, subscription_list = 2, subscription_remove = 2, help = 2, response_list = 2 }
+
+# Commands easily mistaken for one another. With `contrast_chance`, a batch is
+# written with one message for each command of a group, side by side, plus a
+# `near_miss` message that asks for none of them, so the writer has to keep
+# them apart.
+contrast_chance = 0.25
+contrast_groups = [
+  ["pairing", "pairings_link", "rating", "standings_link"],
+  ["mods", "summon_mods", "captains"],
+  ["rules", "faq", "starter_guide", "captain_guidelines", "help"],
+  ["available", "unavailable", "availability_url"],
+  ["tell", "subscription_list", "subscription_remove", "notification_url"],
+  ["response_list", "subscription_list"],
+]
+
+# What a `none` message is, one picked per message. `like` is a pool of
+# examples, one of which the writer is shown, so no single one gets copied.
+# Only kinds with `arguments = true` may name a player, league or round, and
+# those are never written in the `command_like_styles`, where a name plus a few
+# words would read as a real request ("@x next round"). `near_miss` kinds are
+# the ones put beside a group of look-alike commands in a contrast batch.
+none_kinds = [
+  { kind = "thanks the bot or says something friendly to it", like = ["thanks bot", "you're the best", "good bot", "appreciate it"] },
+  { kind = "a greeting or small talk", like = ["hi", "morning all", "how's everyone", "sup"] },
+  { kind = "complains about a loss or a tough round", like = ["ugh lost again", "worst round ever", "my endgame was a disaster"] },
+  { kind = "asks a chess question the bot can't answer", like = ["best reply to the London?", "is the Najdorf sound", "how do I convert a rook endgame", "which engine is best"] },
+  { kind = "asks for something the bot can't do", like = ["swap boards with someone", "change a game result", "predict the winner", "make me captain", "give me a bye"], arguments = true },
+  { kind = "asks about another person in a way the bot can't answer", like = ["has someone been online today", "is someone nice", "where is someone from"], arguments = true, near_miss = true },
+  { kind = "a near miss that sounds like a command but isn't", like = ["tell someone I said hi", "tell me a joke", "list your favourite openings", "remind me to drink water"], near_miss = true },
+  { kind = "says something about their own availability that isn't setting it", like = ["available to help test the bot", "free for a coffee later", "busy week at work"], near_miss = true },
+  { kind = "a test message or keyboard mash", like = ["test", "asdf", "testing 123", "..."] },
+  { kind = "talks about the bot in the third person to someone else", like = ["the bot is great", "the bot was down earlier", "who made this bot anyway"] },
+  { kind = "reacts to an earlier answer from the bot", like = ["ha nice", "that's wrong", "lol ok", "huh"] },
+  { kind = "tells the bot about their game result or how they played, without asking for anything", like = ["won my game!", "drew a long endgame", "blundered a queen lol"], arguments = true },
+  { kind = "asks the bot an opinion question", like = ["who wins the season", "is the London boring", "should I play e4"] },
+  { kind = "jokes around with the bot, pretending it's a person", like = ["do you dream of chess", "are you sentient", "want to play a game"] },
+  { kind = "mentions a command word in passing without asking for anything", like = ["my rating has been terrible lately", "the rules here are fair", "my pairing was rough last week", "mods are doing a great job"], near_miss = true },
+  { kind = "scheduling chatter meant for their opponent, sent to the bot by mistake", like = ["does thursday work for you", "sorry, running late", "ok see you then"], arguments = true },
+]
+command_like_styles = ["keyword", "terse", "fragment", "near_exact"]
+
+# How often a notification request names no event ("notify me about my team"),
+# which leaves the event to the bot.
+no_event_chance = 0.2
+
+# What the writer is told about each event of a notification request.
+event_descriptions = { starts = "when the game starts", ends = "when the game ends or its result", scheduled = "when the game gets scheduled" }
+
+# One line of the writer's plan per message. Slots: {what}, {event}, {include},
+# {angle}, {style}, {words}.
+line = "{what}{event}{angle}{include}. Style: {style}. At most {words} words."
+none_what = "{kind}, in its own words (something like: {like}) (not a request the bot can act on)"
+event = "; they want to hear {description}, and the message must say so (in any words)"
+no_event = "; they don't say which event (a game starting, ending or getting scheduled)"
+include = "; include {placeholders}"
+no_placeholders = "; no placeholders"
+angle = "; {angle}"     # one of the intent's `angles`, added with `angle_chance`
+angle_chance = 0.7
+unlike = " ({unlike})"  # the intent's `unlike` note from intents.toml
+
+# Phrasing styles: how often each is used, what the writer is told, and the
+# word limits a message in that style is given.
+[styles]
+near_exact = { weight = 3, words = [4, 6, 8], description = "close to a terse command, like 'rating bob' or 'pairings', but not necessarily exact syntax" }
+question = { weight = 4, words = [6, 8, 12, 15], description = "a natural question" }
+indirect = { weight = 3, words = [8, 12, 15, 20], description = "describes a need or a problem rather than asking directly" }
+terse = { weight = 2, words = [3, 4, 6], description = "very short, a few words" }
+polite = { weight = 2, words = [8, 12, 15], description = "polite but still short" }
+typos = { weight = 2, words = [4, 6, 8, 12], description = "sloppy phone typing with typos and missing punctuation" }
+runon = { weight = 1, words = [25, 35], description = "one long run-on sentence with extra context" }
+frustrated = { weight = 1, words = [6, 8, 12], description = "a bit frustrated or impatient" }
+newcomer = { weight = 1, words = [8, 12, 15], description = "a confused new player who doesn't know the right words" }
+keyword = { weight = 3, words = [1, 2, 3, 4], description = "just the command word and its arguments, the way a regular types it, maybe misspelled" }
+fragment = { weight = 2, words = [3, 5, 7], description = "a fragment with no verb, like a search query" }
+aside = { weight = 2, words = [8, 12, 16], description = "mid-conversation, starting with something like 'also', 'oh and', 'btw' or 'quick one'" }
+emoji = { weight = 1, words = [4, 6, 10], description = "casual, with an emoji or two" }
+multi = { weight = 1, words = [15, 25], description = "two sentences: a bit of context first, then the request" }
+
+# Arguments per intent. Intents not listed take no arguments.
+[arguments]
+tell = [
+  { label = "player", chance = 0.45, values = "players" },
+  { label = "league", chance = 0.2, values = "leagues" },
+  { label = "team", chance = 0.3, values = "teams" },
+]
+subscription_remove = [
+  { label = "subscription id", chance = 0.6, values = "subscription_ids" },
+  { label = "player", chance = 0.2, values = "players" },
+  { label = "league", chance = 0.2, values = "leagues" },
+]
+rating = [{ label = "player", chance = 0.7, values = "players" }]
+pairing = [
+  { label = "player", chance = 0.5, values = "players" },
+  { label = "round", chance = 0.3, values = "rounds" },
+]
+pairings_link = [{ label = "league", chance = 0.3, values = "leagues" }]
+standings_link = [{ label = "league", chance = 0.3, values = "leagues" }]
+rules = [{ label = "league", chance = 0.3, values = "leagues" }]
+faq = [{ label = "league", chance = 0.3, values = "leagues" }]
+starter_guide = [{ label = "league", chance = 0.3, values = "leagues" }]
+captain_guidelines = [{ label = "league", chance = 0.3, values = "leagues" }]
+captains = [{ label = "league", chance = 0.3, values = "leagues" }]
+mods = [{ label = "league", chance = 0.3, values = "leagues" }]
+nomination_url = [{ label = "league", chance = 0.3, values = "leagues" }]
+notification_url = [{ label = "league", chance = 0.3, values = "leagues" }]
+availability_url = [{ label = "league", chance = 0.3, values = "leagues" }]
+available = [
+  { label = "round", chance = 0.6, values = "rounds" },
+  { label = "league", chance = 0.2, values = "leagues" },
+]
+unavailable = [
+  { label = "round", chance = 0.6, values = "rounds" },
+  { label = "league", chance = 0.2, values = "leagues" },
+]
+none = [
+  { label = "player", chance = 0.15, values = "players" },
+  { label = "league", chance = 0.15, values = "leagues" },
+  { label = "round", chance = 0.1, values = "rounds" },
+]
+
+# Ways people put each request, one picked per message (with `angle_chance`)
+# so the same intent is asked for in different words. Write them as what the
+# person does, not as text to copy.
+[angles]
+help = ["asks what commands there are", "asks how to use the bot", "asks what the bot is for", "asks for the help text", "says they don't know what to type to the bot"]
+tell = ["asks to follow their own team's games", "asks to be pinged for all their team's games", "asks to be pinged when a game happens", "asks to follow a player's games", "asks to be alerted", "asks to get a message about it", "asks to keep them posted", "asks to watch a game for them", "asks for a heads up", "asks to subscribe to a player's games"]
+subscription_list = ["asks what they're following", "asks which alerts they have set up", "asks to show their subscriptions", "asks what they've signed up for", "asks who they get pinged about"]
+subscription_remove = ["asks to unsubscribe", "asks to stop the pings", "asks to unfollow", "asks to delete an alert", "asks to cancel a notification", "says they don't want those messages anymore"]
+response_list = ["asks which phrases the bot reacts to", "asks for the list of canned responses", "asks what auto-replies exist", "asks to see the responses"]
+rating = ["asks for elo", "asks how strong a player is", "asks for a rating", "asks what someone is rated", "asks for their own rating", "asks for a classical rating"]
+pairing = ["asks who they're playing", "asks who their opponent is", "asks when someone's game is", "asks for their pairing", "asks who someone plays this round", "asks whether their game is scheduled"]
+pairings_link = ["asks where the pairings are", "asks for the pairings page", "asks to see this round's pairings", "asks where to look up who plays whom"]
+standings_link = ["asks for the table", "asks how the teams stand", "asks for the leaderboard", "asks who's leading", "asks for the scores so far"]
+rules = ["asks for the rules", "asks for the regulations", "asks where the rules are written", "asks to see the league rules"]
+faq = ["asks for the FAQ", "asks where common questions are answered", "asks for the frequently asked questions"]
+starter_guide = ["asks for the starter guide", "asks what a new player should read", "asks for the handbook", "asks how to get started in the league"]
+captain_guidelines = ["asks what a captain has to do", "asks for the captain guide", "asks about captain duties"]
+captains = ["asks who the captains are", "asks who captains a team", "asks who their captain is"]
+mods = ["asks who the mods are", "asks who runs the league", "asks for the list of moderators"]
+summon_mods = ["asks for a mod to come help", "says they need a moderator", "pings the mods", "asks for an admin", "reports a problem and wants a mod"]
+nomination_url = ["asks where to nominate a game", "asks for the game of the round nomination", "asks how to nominate a game"]
+notification_url = ["asks where to change notification settings", "asks how to stop league emails or pings", "asks for the notification preferences page"]
+availability_url = ["asks where to set availability", "asks how to mark rounds they can play", "asks for the availability page"]
+link_accounts = ["asks to connect their lichess account", "asks how to verify their account", "asks to link accounts", "says the bot doesn't know their lichess name"]
+available = ["says they can play", "says count them in", "says they're back and available", "marks themselves available"]
+unavailable = ["says they can't play", "says they're away", "asks to be marked unavailable", "says to count them out", "says they need a break for a round"]
+source = ["asks where the code is", "asks for the bot's repo", "asks if the bot is open source", "asks for the github link"]
+version = ["asks what version is running", "asks which build the bot is on", "asks if the bot was updated"]
+uptime = ["asks how long the bot has been up", "asks when the bot last restarted", "asks if the bot has been running long"]
+
+# How messages for an intent often look, shown only to the checker (never to
+# the writer, so they are never copied), so it doesn't mistake terse or sloppy
+# requests for chat.
+[reads_like]
+help = ["what can u do", "commands?", "how do i use this bot"]
+tell = ["ping me when tallover plays", "alert me for team Rooks games", "notify me when my game starts", "follow knight42"]
+subscription_list = ["my alerts", "what am i subscribed to", "list my pings"]
+subscription_remove = ["stop 2", "unsub #4", "no more pings for knight42", "cancel my lonewolf alerts", "too many alerts for 6, stop it"]
+response_list = ["what do you auto reply to", "list responses"]
+rating = ["rating bob", "whats my elo", "how strong is knight42"]
+pairing = ["who am i playing", "my pairing", "when is knight42's game", "bob rd 3?"]
+pairings_link = ["pairings", "pairings link", "where are this round's pairings"]
+standings_link = ["standings", "who's winning", "where do we stand", "table"]
+rules = ["rules", "are draws allowed?", "what's the forfeit rule"]
+faq = ["faq", "common questions page"]
+starter_guide = ["new here, where do i start", "starter guide", "how does this league work for a newbie"]
+captain_guidelines = ["captain duties", "what does a captain do"]
+captains = ["who are the captains", "my captain?"]
+mods = ["mods", "who are the mods", "mod list"]
+summon_mods = ["i need a mod", "get me the mods", "@mods help, someone's cheating"]
+nomination_url = ["nominate a game", "game of the round link"]
+notification_url = ["notification settings", "where do i turn off league emails", "how do i change my pings settings"]
+availability_url = ["where do i set availability", "availability page"]
+link_accounts = ["link my lichess", "verify my account"]
+available = ["count me in rd 5", "in for next round", "back and available", "can play round 3", "join rd 2 lonewolf"]
+unavailable = ["skip round 1-2", "out for rd 4", "can't play next round", "not week 8", "sit me out this round"]
+source = ["source code?", "github"]
+version = ["version", "which build are you"]
+uptime = ["uptime", "how long have you been up"]
+none = ["thanks bot", "my rating is awful lately", "tell me a joke", "is the london boring"]

@@ -1,0 +1,10 @@
+# Typing noise added in code to the words around placeholders (never inside
+# them). How often a message gets noise depends on its prompt framing; see
+# prompts/*/framings.toml.
+
+edits = [1, 3]              # how many typos a noisy message gets
+lowercase_chance = 0.3      # a noisy message is sometimes all lowercase
+min_word_length = 4         # only words this long get typos
+# swap: swap two letters; drop: drop one; double: double one;
+# apostrophe: drop an apostrophe; join: join a word to the next one.
+kinds = ["swap", "drop", "double", "apostrophe", "join"]

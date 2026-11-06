@@ -1,0 +1,32 @@
+# Times in a city's zone ("20:00 Berlin time") or the player's own ("20:00 my time", having said
+# where they are), and long threads: chains of counters that turn down the last times by name
+# before trying another ("tue and wed don't work, thu is late. fri 18:00?"), marathons and
+# reschedules. Its records join v3 and gaps-1 to gaps-3 ("g4-").
+
+[output]
+directory = "data/gaps-4"
+prefix = "g4-"
+
+[threads]
+count = 1050
+seed = 41
+attempts = 3
+others = 0.2
+
+[threads.weights]
+zoned_offer = 10
+zoned_counter = 8
+haggle = 10
+chain = 6
+marathon = 6
+reschedule = 4
+withdraw_and_add = 3
+split = 3
+
+[commands]
+count = 0
+seed = 42
+batch = 6
+
+[review]
+sample = 40

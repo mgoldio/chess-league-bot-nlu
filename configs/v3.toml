@@ -1,0 +1,20 @@
+# The third dataset: about 1.5x the threads of the first full run, all from the
+# current plots, and about 4x the commands. Planned counts are a little above
+# the target, since a thread fails all its attempts now and then and about one
+# command in eight is rejected.
+
+[output]
+directory = "data/v3"
+
+[threads]
+count = 8900
+seed = 3
+attempts = 3
+
+[commands]
+count = 30000
+seed = 4
+batch = 6
+
+[review]
+sample = 40

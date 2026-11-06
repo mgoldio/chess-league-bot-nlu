@@ -1,0 +1,1 @@
+Members of an online chess league type quick requests to the league's chat bot in a group chat, usually mid-conversation and often on a phone. Write what they actually type: short, casual, lowercase is common, and they rarely explain themselves.
