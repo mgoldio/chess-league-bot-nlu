@@ -1,0 +1,1 @@
+Two amateur players in an online chess league are arranging when to play their game, in the thread under their pairing. Write their messages the way people actually type in a busy group chat: short, casual, sometimes fragments, often on a phone between other things.

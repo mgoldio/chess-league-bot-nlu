@@ -1,0 +1,107 @@
+# The bot's commands, as the model tells them apart.
+#
+# `description` says what the message is for, and is what the data generator
+# and its verifier work from; `unlike` says how it differs from the commands it
+# is easily mistaken for. A command with `events` also tells the model which
+# event the message is about. How the generator plans each command's arguments
+# is in generate/content/commands.toml.
+
+[help]
+description = "asks what the bot can do or which commands it knows"
+unlike = "about the bot's own commands, not how the league works or a league question"
+
+[tell]
+description = "asks to be notified about games: a player's, a league's, a team's (their own team's too), or their own"
+unlike = "game notifications, not the notification settings page"
+events = ["starts", "ends", "scheduled"]
+
+[subscription_list]
+description = "asks to see the notifications they are subscribed to"
+unlike = "their own game notifications, not the bot's auto-replies to chat phrases"
+
+[subscription_remove]
+description = "asks to stop or remove one of their notification subscriptions"
+unlike = "stopping one of their game notifications, not the settings page and not an auto-reply to a chat phrase"
+
+[response_list]
+description = "asks the bot to list the phrases it auto-replies to"
+unlike = "the bot's auto-replies to chat phrases, not their game notifications"
+
+[rating]
+description = "asks for a player's lichess rating number, or their own"
+unlike = "a player's rating number, not the league table and not a pairing"
+
+[pairing]
+description = "asks about a player's (or their own) current pairing or scheduled game"
+unlike = "one player's game or opponent, not the page listing every pairing"
+
+[pairings_link]
+description = "asks for the link to the pairings page"
+unlike = "the page listing every pairing (also a bare 'pairings'), not one player's game"
+
+[standings_link]
+description = "asks for the league standings, or where a team or player stands"
+unlike = "the league table and places in it, not a player's rating"
+
+[rules]
+description = "asks for the league rules or regulations, or a question the rules answer (are draws allowed?)"
+unlike = "the league's rules, not what captains must do, the FAQ or the guide for new players"
+
+[faq]
+description = "asks for the league FAQ, or a common question the FAQ answers"
+unlike = "the FAQ, not the rules or the guide for new players"
+
+[starter_guide]
+description = "asks for the starter guide or player handbook"
+unlike = "the guide for new players, not the rules or the bot's commands"
+
+[captain_guidelines]
+description = "asks what team captains are supposed to do"
+unlike = "what captains must do, not who the captains are, and not the rules"
+
+[captains]
+description = "asks who the team captains are"
+unlike = "who the team captains are, not the moderators"
+
+[mods]
+description = "asks who the league moderators are, or just says 'mods'"
+unlike = "who the moderators are, without asking one to come now"
+
+[summon_mods]
+description = "explicitly calls a moderator to come or help now, like 'i need a mod' or 'get me the mods'"
+unlike = "calling a moderator to come now, not asking who they are"
+
+[nomination_url]
+description = "asks for the link to nominate games, for example for game of the round"
+
+[notification_url]
+description = "asks for the link to their notification settings"
+unlike = "the settings page, not subscribing to or unsubscribing from games"
+
+[availability_url]
+description = "asks for the link to update their availability"
+unlike = "the page to set availability, not saying whether they can play"
+
+[link_accounts]
+description = "asks to link their chat account with their lichess account"
+
+[available]
+description = "says they can play a round"
+unlike = "says they can play, not asking for the availability page"
+
+[unavailable]
+description = "says they can't play a round"
+unlike = "says they can't play, not asking for the availability page"
+
+[source]
+description = "asks where the bot's source code is"
+
+[version]
+description = "asks which version of the bot is running"
+
+[uptime]
+description = "asks how long the bot has been running"
+
+[none]
+description = "not a request the bot can act on"
+unlike = "asks the bot for nothing it does, and isn't a question one of its pages answers"

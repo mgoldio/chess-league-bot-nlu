@@ -1,0 +1,44 @@
+# Concentrated on what gaps-1 didn't move: a time picked inside a range written as its clock
+# alone ("16:00 then"), acceptances that are only "see you then", declines that name the day;
+# and withdrawals, kept up so they aren't diluted. Its records join v3 and gaps-1 ("g2-").
+
+[output]
+directory = "data/gaps-2"
+prefix = "g2-"
+
+[threads]
+count = 1600
+seed = 21
+attempts = 3
+others = 0.1
+
+[threads.weights]
+range_pick_clock = 40
+see_you_then = 14
+timeless_accept = 3
+decline_names_day = 5
+decline_names_day_counter = 4
+withdrawn = 4
+withdraw_then_accept = 4
+withdraw_after_reply = 4
+withdraw_and_add = 3
+withdraw_unanswered = 3
+accept_and_withdraw = 3
+correction = 2
+
+[commands]
+count = 600
+seed = 22
+batch = 6
+others = 0.3
+
+[commands.weights]
+unavailable = 6
+available = 4
+rules = 5
+nomination_url = 4
+source = 4
+pairing = 3
+
+[review]
+sample = 40

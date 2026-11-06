@@ -1,0 +1,35 @@
+# Aimed at what the gaps-1 model got wrong on the other model's set: offers laid out as numbered
+# lists ("1. Wed 19:30"), numbers that aren't times (time controls, boards, move counts), and
+# counters that go through the opponent's times again before offering ("Tue 19:00 is during
+# work, Thu 21:00 is 3am for me"); and what the gaps-2 model still got wrong: a time picked in a
+# range written as "16:00 then", and a short decline with a counter in the same message.
+# Its records join v3, gaps-1 and gaps-2 ("g3-").
+
+[output]
+directory = "data/gaps-3"
+prefix = "g3-"
+
+[threads]
+count = 1050
+seed = 31
+attempts = 3
+others = 0.3
+
+[threads.weights]
+listed = 14
+counter_quoting = 14
+counter = 6
+question_counter = 4
+pick_by_reference = 5
+pick_by_reference_later = 4
+range_pick_clock = 10
+short_no_but = 5
+short_decline_counter = 4
+
+[commands]
+count = 0
+seed = 32
+batch = 6
+
+[review]
+sample = 40

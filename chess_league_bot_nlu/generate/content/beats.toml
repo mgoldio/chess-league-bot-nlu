@@ -1,0 +1,59 @@
+# What each kind of beat asks the writer to say, and how a line of the plan
+# reads. Placeholders like {T1} stand for times: the writer uses each exactly
+# once, and code fills in the real time text afterwards.
+#
+# Slots: {times} (the placeholders, joined), {time} (one placeholder), {day}
+# (a placeholder for a day alone), {offer} (a plain description of an offer,
+# for context), {reference} (how to point at an offer without writing it),
+# {count} (how many times a list holds), {note} (from plots.toml, in brackets).
+# A literal brace is doubled: {{LIST}} shows the writer {LIST}.
+
+# One line of the plan. Slots: {speaker}, {persona}, {sent}, {words},
+# {instruction}, {meanings}.
+line = "{speaker} ({persona}), {sent} UTC, at most {words} words: {instruction}{meanings}"
+
+offer = "proposes {times}{note}"
+offer_list = "proposes {count} times{note}, writing {{LIST}} once where they go: code lays them out as a list, one per line. Write a short lead-in before {{LIST}} (for example a line ending in a colon), and you may add a line after it"
+offer_same_day = "says the day is fine, naming it as {day} (like '{day} is fine but…'), and asks whether they could make it {time} instead (a counter, not an agreement){note}"
+accept_restate = "agrees to the opponent's offer of {offer}, writing the placeholder {time} where they name the time{note}"
+accept_partial = "agrees to the opponent's offer of {offer}, writing only its day as {time}{note}"
+accept_pick = "agrees to the opponent's offer of {offer} by choosing {time} within it{note}"
+accept_bare = "agrees to the opponent's offer of {offer} without writing any day or time (like 'ok', 'deal', 'works for me', in their own words){note}"
+accept_bare_reference = "agrees to the opponent's offer of {offer} without writing its day or clock time, pointing at it as {reference} so it's clear which{note}"
+rejecting = "first says {time} doesn't suit them (briefly, e.g. too early or too late), then "
+withdraw = "says {time} doesn't work for them anymore; the other times they offered still stand, and they don't repeat them{note}"
+withdraw_reference = "takes back one of their own offers without writing its clock time, pointing at it as {reference} without quote marks (like forget …, never mind … or … is out now, in their own words); the other times they offered still stand, and they don't repeat them{note}"
+busy = "says they can't play during {time}, writing {time} itself for the hours they're busy (not just 'then' or 'that time'){note}, without proposing anything"
+quoting = "first goes through {times} one by one, saying briefly why each doesn't work for them (work, sleep, their time zone), then "
+own_city = "; says where they live, naming {city} (like 'I'm in {city}'): the placeholder already ends in 'my time', so never write 'my time' or a zone yourself"
+busy_before = "first says they can't make {time} (busy then: work, an exam, family, in their own words), then "
+context_before = "first mentions that the round ends {time}, then "
+vague = "{note}; no clock time, and nothing that sounds like a firm offer"
+correct = "corrects a slip in their last message: the time they meant is {time} (like 'oops, I mean …'), without repeating the time they wrote before{note}"
+retract = "takes back their earlier agreement to {offer}: they can't make it after all{note}; they don't write the day or time"
+retract_restate = "says they can't make {time} after all, taking back their agreement to it{note}"
+cancel = "cancels the game agreed for {offer}, which they had offered: they can't make it after all{note}; they don't write the day or time"
+cancel_restate = "cancels the game agreed for {time}, which they had offered: they can't make it after all{note}"
+also_withdraw = "; in the same message, says their own offer of {time} no longer works for them"
+also_withdraw_reference = "; in the same message, takes back their own offer they can point at as {reference} without quote marks (like forget …), without writing its clock time"
+mistaken_accept = "says {time} works for them, having missed that it was taken back"
+decline = "{note}"
+decoy = "{note}"
+nudge = "{note}"
+remark = "says {note}, without proposing anything and without writing any day or clock time"
+chat = "{note}"
+opener = "{note}"
+closer = "{note}"
+
+# Added to a line when the message also does this.
+local = "; adds that this is {time} in their own time zone, writing {time} (like 'so that's {time} for me'), without naming a zone"
+mention = "; @-mentions the opponent once by writing {OPPONENT}"
+paragraphs = "; written as two or three short paragraphs separated by blank lines (\\n\\n)"
+
+# How a bare acceptance points at one of several offers in the same message.
+reference_ordinal = "the {ordinal} one"
+reference_last = "the last one"
+reference_day = "the {weekday} one"
+reference_day_bare = "{weekday}"
+reference_day_part = "{weekday} {part}"
+ordinals = ["first", "second", "third", "fourth"]

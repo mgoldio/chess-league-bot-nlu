@@ -1,0 +1,48 @@
+# When rounds run and when things happen in a thread.
+#
+# Each league: its round schedule (when pairings are published and how long a
+# round lasts), which rounds to plan, how often to pick it, and how its prompt
+# describes it. Times are UTC. Top-level keys come first: in TOML, every key
+# after a [table] header belongs to that table.
+
+# Zones a player may offer in instead of UTC; offsets come from the resolver.
+# A zone named for a city ("Berlin time") may instead be written "my time" by the player who
+# offers it, who then says where they are (`my_time_chance` in plots.toml).
+zones = ["CET", "EST", "PST", "IST", "AEDT", "BRT", "JST", "GMT", "CST", "MSK", "SGT", "ET", "UTC+1", "UTC+2", "UTC-5", "GMT+3", "GMT-3", "UTC+5:30", "Berlin time", "Paris time", "UK time", "New York time", "NYC time", "Chicago time", "Sydney time", "Tokyo time", "Mumbai time", "Moscow time", "Sao Paulo time"]
+
+[leagues.team4545]
+weight = 3
+description = "a team league (45+45)"
+first_round = 3
+last_round = 9
+first_published = "2026-11-02T18:00:00Z"   # pairings for `first_round`; each later round is a week later
+round_hours = 162                          # Monday 18:00 to the next Monday 12:00
+publish_delay_minutes = [0, 0, 5, 20, 45]  # pairings sometimes go up a little late
+
+[leagues.lonewolf]
+weight = 1
+description = "an individual league (30+30)"
+first_round = 4
+last_round = 10
+first_published = "2026-11-08T22:00:00Z"
+round_hours = 168
+publish_delay_minutes = [0]
+
+# How long after the previous message a beat comes, in minutes: drawn from a
+# log-normal distribution with this mu and sigma, then capped at 50 hours.
+[gaps]
+fast = { mu = 2.5, sigma = 0.8 }
+normal = { mu = 4.2, sigma = 1.1 }
+slow = { mu = 6.8, sigma = 1.0 }
+
+# When offered games start: weight per UTC hour (0-23) and per minute past the hour.
+[game_times]
+hour_weights = [2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 3, 4, 4, 4, 4, 4, 5, 7, 9, 10, 10, 8, 6, 3]
+minutes = { 0 = 10, 30 = 4, 15 = 1, 45 = 1 }
+earliest_after_pairing_hours = 10   # nobody offers a game for the next few hours
+lead_hours = 2                      # an offered game is at least this long after the offer
+before_deadline_hours = 3           # and ends this long before the round does
+spacing_hours = 1                   # offers in a thread are at least this far apart
+range_hours = [1, 1.5, 2, 2, 3, 3, 4, 6, 9]  # how long an offered range is (the longest are open windows)
+open_pick_hours = 4                 # an "after 18:00" offer is accepted at most this much later
+accept_before_hours = 1             # an acceptance comes at least this long before the game

@@ -1,0 +1,38 @@
+# Values that fill command arguments.
+#
+# A username is one of `username_forms` filled with words from
+# `username_words`: {w} a word, {W} the same capitalized, {w2}/{W2} a second
+# word, {n} a number. With `mention_chance` it is written as a chat mention,
+# @**name**. In `rounds` and `subscription_ids`, {n} is a number from 1 to 12;
+# in `rounds` {m} is a later one, {word} the number written out and {ordinal}
+# like "3rd".
+
+username_words = [
+  "knight", "rook", "pawn", "queen", "bishop", "tal", "fischer", "gambit", "sicilian", "caro",
+  "endgame", "zugzwang", "blitz", "tempo", "fork", "pin", "castle", "dragon", "najdorf", "morphy",
+]
+username_forms = ["{w}{n}", "{W}_{w2}", "{w}_{w2}{n}", "{W}{W2}", "the_{w}", "{w}lover{n}"]
+mention_chance = 0.25
+
+# A team name is one of `team_forms` filled with words from `team_words`: {a}
+# a word, {b} another, {n} a number.
+team_words = [
+  "Knights", "Rooks", "Pawns", "Bishops", "Queens", "Kings", "Gambit", "Fianchetto", "Zugzwang",
+  "Forks", "Pins", "Skewers", "Castles", "Dragons", "Tempo", "Blunder", "Endgame", "Opening",
+  "Checkmate", "Stalemate", "Sicilian", "Caro", "Najdorf", "Berlin", "London", "Tactics", "Outpost",
+  "Passed Pawns", "Hanging Pieces", "Open Files", "Back Rank", "Smothered", "Desperado", "Patzers",
+]
+team_forms = [
+  "{a}", "The {a}", "{a} {b}", "Team {a}", "{a} United", "{a} FC", "{a} & {b}", "{a}{n}",
+  "Fighting {a}", "{a} Gang", "{a} Squad", "Kings of {a}", "No {a}", "{a} Brigade",
+]
+leagues = [
+  "team4545", "lonewolf", "chess960", "blitzbattle", "the 45 league", "lone wolf", "45+45", "30+30",
+  "960", "the team league",
+]
+rounds = [
+  "round {n}", "rd {n}", "rd{n}", "next round", "this round", "r{n}", "R{n}", "rnd {n}", "round #{n}",
+  "week {n}", "wk {n}", "last round", "round {word}", "the {ordinal} round", "{ordinal} round",
+  "rounds {n} and {m}", "round {n}-{m}",
+]
+subscription_ids = ["{n}", "#{n}"]

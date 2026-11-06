@@ -1,0 +1,1 @@
+Different people in a chess league's chat each ask the league bot for something in their own way: a regular who knows the bot, a newcomer, someone in a hurry, someone mid-joke. Write each the way that person would type it.

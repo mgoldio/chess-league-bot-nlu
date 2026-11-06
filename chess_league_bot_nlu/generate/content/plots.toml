@@ -1,0 +1,770 @@
+# Storylines for scheduling threads.
+#
+# Each plot is a list of beats. A beat says who speaks (`by`: first, second,
+# either, or other = the opponent of the previous beat's speaker) and what the
+# message does (`do`):
+#
+#   offer            proposes `times` times (a number, or "low-high").
+#                    `range_chance`, `multi_day_chance` (the same time on more
+#                    days: "21:00 fri or sat"), `struck_chance` (an edited
+#                    message with a replaced time struck through) and
+#                    `local_chance` (the time converted to the player's own
+#                    zone, "that's 3pm for me", which is not an offer) override
+#                    the defaults below. `near`: the times are asked about
+#                    close to the opponent's last offer, inside its range or
+#                    a quarter or half hour around it. `same_day`: keeps the day
+#                    of the opponent's offer and asks for another clock time
+#                    ("sat is fine but can we make it 10:00?"), which is an
+#                    offer. `layout = "list"` lays the times out one per line,
+#                    "inline" never does; by default it is up to chance.
+#                    `zone_chance` overrides the default below.
+#                    `rejects`: first goes through the opponent's last times,
+#                    written again, saying why each doesn't work (not offers).
+#   accept           accepts one of the opponent's standing offers: from their
+#                    `last` offer message, or `any` standing one. `style` asks
+#                    for a way of writing it (bare, restate, partial) where it
+#                    fits; `rejects` also turns down another of their times
+#                    by name, in the same message; `also_withdraws` takes back
+#                    one of the speaker's own offers in the same message;
+#                    `loosely` points at the offer by its day and part of the
+#                    day only ("saturday evening works"); `pick_clock_chance` overrides
+#                    the default below for a time picked inside a range
+#   withdraw         takes back one of the speaker's own standing offers
+#   correct          takes back the one time the speaker just offered as a slip
+#                    and offers the one they meant ("I mean wed 12:00")
+#   retract          takes back the speaker's own earlier acceptance; the
+#                    offer stands again. `restates` writes the time again
+#   mistaken_accept  tries to accept the offer just withdrawn (not a real acceptance)
+#   vague            says roughly when they're free, or asks about playing now or
+#                    soon, with no clock time: never an offer (`notes = "vague"` or
+#                    "relative")
+#   cancel           the player who offered an agreed time cancels it; the game is
+#                    off. `restates` writes the time again
+#   busy             says they can't make a new time of their own, written in full
+#                    ("I'm at work until thu 20:00"); not an offer. `near`: a
+#                    window around the opponent's last offer
+#   decline, decoy, nudge, remark, chat   messages with no times; `note` says what they say.
+#                    `names_day` lets the message name a day ("I'm away saturday")
+#
+# `note` is a string or a list to pick from; `notes` names a shared list under
+# [notes] instead. An offer's `busy_chance` overrides the default below. `gap` is how long after the
+# previous message the beat comes (fast, normal, slow; see schedule.toml).
+# `chance` makes a beat optional. `before_agreed` makes an offer come well
+# before the time already agreed (for reschedules).
+#
+# Top-level keys come first: in TOML, every key after a [table] header belongs
+# to that table.
+
+opener_chance = 0.35        # a thread starts with a greeting
+closer_chance = 0.4         # and ends with a closing line
+closer_reply_chance = 0.4   # which the other player answers
+range_chance = 0.15         # an offered time is a range ("18:00-20:00")
+open_chance = 0.05          # or open-ended ("after 18:00")
+zone_chance = 0.05          # or written in a zone other than UTC
+multi_day_chance = 0.05     # an offered time is offered on several days
+struck_chance = 0.03        # an offer message was edited: a replaced time is struck through
+local_chance = 0.05         # an offer or acceptance converts its time to the player's own zone
+offer_note_chance = 0.35    # an offer without a note of its own gets one of `offer_notes`
+accept_note_chance = 0.35   # and an acceptance one of `accept_notes`
+busy_chance = 0.08          # an offer first names a time the player can't make ("can't do thu 19:00, but…")
+busy_range_chance = 0.5     # a time someone can't make is a range ("busy sat 14:00-18:00")
+pick_clock_chance = 0.5     # a time picked inside a range on one day is written as its clock alone ("18:00 then")
+my_time_chance = 0.4        # an offer in a city's zone is written "my time" by its player, who says where they are
+quoting_words = 10          # more words a message may use for each time it goes through again to turn down
+withdraw_reference_chance = 0.6  # a withdrawal points at the offer ("forget thursday") rather than writing it
+context_chance = 0.04       # an offer first mentions when the round ends ("round ends mon 12:00, so…"); not an offer
+
+openers = [
+  "a greeting",
+  "wishes good luck",
+  "banter about last round",
+  "small talk",
+  "says hi and that they're looking forward to the game",
+  "a greeting that mentions their pairing this round",
+  "asks how the opponent's week is going",
+  "says sorry for the late reply to the pairing",
+  "mentions the time control, like 45+45 or 30+30 (no clock time)",
+  "mentions which board they play on this round, like board 2",
+  "mentions how many moves their last game went",
+  "mentions they're new to the league",
+  "a one-word greeting with an emoji",
+]
+closers = [
+  "thanks",
+  "see you then",
+  "good luck, have fun",
+  "an emoji only",
+  "thanks and see you then",
+  "says they'll be online a few minutes early (a number of minutes, no clock time)",
+  "looking forward to it",
+  "says may the best player win",
+  "says to ping them if anything changes",
+  "a thumbs up",
+  "says they'll send the challenge when it's time",
+]
+offer_notes = [
+  "with a greeting first",
+  "asking which suits them best",
+  "saying they'll schedule it once one is agreed",
+  "mentioning they're flexible otherwise",
+  "explaining a constraint (work, kids, studies) briefly",
+  "mentioning their time zone by its UTC offset only (like +11 or -5), with no clock time",
+  "adding what time of day that is for each of them (like 'morning for me, evening for you'), with no clock time",
+  "saying they're excited to play",
+  "asking the opponent to suggest something if none of these work",
+  "in a hurry, as a quick message",
+]
+accept_notes = [
+  "and says they'll schedule it",
+  "and says they'll go ahead and schedule the game",
+  "and asks the opponent to schedule it",
+  "and says see you then",
+  "and thanks them",
+  "in one or two words or an emoji, like a quick thumbs up",
+  "and says good luck",
+  "and adds a short remark about the game being a long one",
+]
+
+# How an acceptance is written, by weight: bare ("deal"), restating the time,
+# or naming only its day. Accepting a range always restates the time picked in it.
+[accept_styles]
+bare = 3
+restate = 4
+partial = 2
+
+[plots.quick]
+weight = 14
+beats = [
+  { by = "first", do = "offer", times = "1-4" },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.terse_yes]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "accept", style = "bare", note = ["in a single word like 'perfect', 'yep' or 'sure'", "with just an emoji and a word, like a thumbs up and 'works'", "in two or three words"] },
+]
+
+[plots.listed]
+weight = 8
+beats = [
+  { by = "first", do = "offer", times = "2-4", layout = "list", note = ["with a greeting line and a blank line before the list, and a closing line after it", "asking whether one of these works for them", "saying they'd like to propose these times and will schedule once one is picked"] },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.range]
+weight = 8
+beats = [
+  { by = "first", do = "offer", times = "1-3", range_chance = 0.8 },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.several_days]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "1-2", multi_day_chance = 0.9, range_chance = 0.3 },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.split]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "first", do = "offer", times = "1-2", gap = "fast", note = "adds more options" },
+  { by = "second", do = "accept", which = "any" },
+]
+
+[plots.counter]
+weight = 12
+beats = [
+  { by = "first", do = "offer", times = "1-3" },
+  { by = "second", do = "remark", chance = 0.3, note = ["those times are awkward because of their own time zone", "they're travelling this week and their schedule is odd", "what part of the day those would be for them (like 'that's the middle of the night here')"] },
+  { by = "second", do = "offer", times = "1-3", note = ["as their own new suggestions, after saying the opponent's times don't work for them", "after explaining briefly why those don't work (work, family, exams)", "after saying those are a little late for them because of their time zone"] },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.question_counter]
+weight = 8
+beats = [
+  { by = "first", do = "offer", times = "1-2", range_chance = 0.9 },
+  { by = "second", do = "offer", times = "1", near = true, note = ["asked as a question, like 'does … still work for you?'", "asked as a question, like 'any chance of …?'", "asked as a question, saying they think they could make that work"] },
+  { by = "first", do = "accept", which = "last", note = ["confirming 'yes I can play' that time", "with just 'yep' or a thumbs up", "confirming it works"] },
+  { by = "second", do = "chat", chance = 0.5, note = ["says they'll schedule it, and see you then", "thanks, and says they'll send the challenge"] },
+]
+
+[plots.tentative]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "2-3" },
+  { by = "second", do = "decline", note = ["can't make any of those because of their time zone, without suggesting any", "none of those work because of work, without suggesting any"] },
+  { by = "second", do = "offer", times = "1-2", range_chance = 0.6, gap = "fast", note = "gives the windows when they could play" },
+  { by = "first", do = "offer", times = "2-3", near = true, note = ["as a run of short questions, one per time, the last one 'at the latest'", "asking 'any chance you could play a bit earlier?', then the times as short questions"] },
+  { by = "second", do = "decline", note = ["says they can't do earlier because of an exam or work that ends right when their window starts, without writing any time", "apologizes: their window really is the earliest they can do, without writing any time"] },
+  { by = "first", do = "accept", which = "any" },
+]
+
+[plots.same_day_counter]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "1-2", range_chance = 0 },
+  { by = "second", do = "offer", times = "1", same_day = true },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.reject_and_accept]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "2-3", range_chance = 0 },
+  { by = "second", do = "accept", which = "last", rejects = true },
+]
+
+[plots.correction]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "chat", chance = 0.5, note = ["asks whether they really meant that, as it seems odd, without writing any day or time", "asks which day they meant, without writing any day or time"] },
+  { by = "first", do = "correct", gap = "fast", note = ["and explains they mixed up days because of their time zone", "laughing at themselves", ""] },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.reasoned_decline]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "2-3", layout = "list" },
+  { by = "second", do = "offer", times = "1", multi_day_chance = 0.8, range_chance = 0.6, note = ["after saying those are a little late for them because of their time zone (give it as a UTC offset like +11, no clock time), and adding what part of the day it would be for each of them", "after saying those don't work because of family, adding what part of the day the new one would be for them"] },
+  { by = "first", do = "offer", times = "1", near = true, note = ["after saying family obligations rule those out, asking whether this would work, and that it should be midday for them", "after saying those times clash with work, asking about this instead"] },
+  { by = "second", do = "accept", which = "last", note = ["and says they'll go ahead and schedule the game", ""] },
+]
+
+[plots.edited]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "2-3", struck_chance = 1.0 },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.retracted]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "2-3" },
+  { by = "second", do = "accept", which = "last" },
+  { by = "second", do = "retract", gap = "slow", restates = true, chance = 1.0, note = ["sorry, a night shift came up", "family emergency", "they forgot about a work trip", "an exam got moved"] },
+  { by = "second", do = "offer", times = "1-3", gap = "fast", chance = 0.8, note = "offers new times instead" },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.retracted_quietly]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "accept", which = "last" },
+  { by = "second", do = "retract", gap = "slow", note = ["something came up at work", "they double-booked themselves"] },
+  { by = "first", do = "offer", times = "1-3", note = "says no problem and offers other times" },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.chain]
+weight = 7
+beats = [
+  { by = "first", do = "offer", times = "1-3" },
+  { by = "second", do = "offer", times = "1-3", note = "as their own new suggestions, after saying the opponent's times don't work for them" },
+  { by = "first", do = "offer", times = "1-2", note = "as their own new suggestions, after saying the opponent's new times don't work either" },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.marathon]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "2-3", note = ["with a greeting and some small talk first, in paragraphs", "saying they're excited to play"] },
+  { by = "second", do = "remark", note = ["they're busy this week and still checking their calendar", "what part of the day those would be for them (like 'early morning here')"] },
+  { by = "second", do = "offer", times = "1-2", range_chance = 0.4, gap = "fast", note = "as their own suggestions instead" },
+  { by = "first", do = "decline", note = ["those don't work either because of kids' bedtime", "those clash with work"] },
+  { by = "first", do = "offer", times = "1-3", gap = "fast", note = "trying a few more" },
+  { by = "second", do = "chat", chance = 0.6, note = ["says sorry for being difficult this week", "asks how strict the deadline is"] },
+  { by = "second", do = "accept", which = "any" },
+  { by = "first", do = "chat", chance = 0.7, note = ["says great, they'll schedule it", "says they'll send the challenge, and good luck"] },
+]
+
+[plots.declined]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-3" },
+  { by = "second", do = "decline", gap = "slow", note = ["none of those times work, without suggesting any", "can't do any of those because of exams, without suggesting any", "their week is packed with work, without suggesting any"] },
+  { by = "first", do = "chat", gap = "slow", note = ["says they'll ask the captains for help", "asks them to suggest anything that works"] },
+]
+
+[plots.silent]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-3" },
+  { by = "first", do = "nudge", gap = "slow", note = ["asks whether the opponent is still there", "a short ping, asking if they saw the message"] },
+  { by = "first", do = "chat", gap = "slow", chance = 0.6, note = "says they'll tell the captain" },
+]
+
+[plots.standoff]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-3" },
+  { by = "second", do = "offer", times = "1-2", gap = "slow", note = "as their own new suggestions, after saying the opponent's times don't work for them" },
+  { by = "first", do = "chat", gap = "slow", note = "can't make those either; suggests asking the captains" },
+]
+
+[plots.short_decline_counter]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "decline", notes = "short_declines" },
+  { by = "second", do = "offer", times = "1-2", gap = "fast", chance = 0.7 },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.short_decline_retry]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "decline", notes = "short_declines" },
+  { by = "first", do = "offer", times = "1-3", note = ["says no problem and tries other times", "tries other times"] },
+  { by = "second", do = "accept", which = "last", chance = 0.7 },
+]
+
+[plots.short_decline_end]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "decline", notes = "short_declines" },
+  { by = "first", do = "chat", chance = 0.3, note = ["asks what works for them instead", "says ok, and asks them to suggest something"] },
+]
+
+[plots.busy_reply]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "busy", near = true, note = ["because of work", "because of an exam", "because of family", "as a short reply, like 'at work until then', in under eight words"] },
+  { by = "second", do = "offer", times = "1-2", gap = "fast", chance = 0.6, busy_chance = 0 },
+  { by = "first", do = "accept", which = "last", chance = 0.8 },
+]
+
+[plots.busy_offer]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-3", busy_chance = 1.0 },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.decoy]
+weight = 7
+beats = [
+  { by = "first", do = "offer", times = "2-3" },
+  { by = "second", do = "decoy", note = ["says something like 'ok let me check and get back to you'", "says 'yes I saw your message', without accepting anything", "asks 'sure, what other times are you free?'", "says they need a couple of minutes to check their calendar (a number of minutes, no clock time)", "says 'maybe', not sure yet, in a few words", "says it's probably fine but they need to confirm later, without agreeing yet", "says 'ok, will check and let you know'"] },
+  { by = "second", do = "accept", which = "last", gap = "slow" },
+]
+
+[plots.withdrawn]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "2-3" },
+  { by = "first", do = "withdraw", gap = "fast" },
+  { by = "second", do = "mistaken_accept", chance = 0.7 },
+  { by = "first", do = "chat", chance = 0.7, note = "points out that time was taken back and the others still stand, without writing any time" },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.reschedule]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "2-3" },
+  { by = "second", do = "accept", which = "last" },
+  { by = "either", do = "offer", times = 1, gap = "slow", before_agreed = true, note = "something came up; asks to move the agreed game to this time instead" },
+  { by = "other", do = "accept", which = "last" },
+]
+
+# Withdrawals of an offer that isn't the latest, in more situations.
+[plots.withdraw_then_accept]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "3", range_chance = 0 },
+  { by = "first", do = "withdraw", gap = "fast" },
+  { by = "second", do = "accept", which = "any" },
+]
+
+[plots.withdraw_after_reply]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "2-3", range_chance = 0 },
+  { by = "second", do = "decoy", notes = "hedges" },
+  { by = "first", do = "withdraw", gap = "slow", note = ["something came up", "they just remembered a work call", ""] },
+  { by = "second", do = "accept", which = "any", gap = "slow" },
+]
+
+[plots.withdraw_and_add]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "2", range_chance = 0 },
+  { by = "first", do = "withdraw", gap = "slow" },
+  { by = "first", do = "offer", times = "1-2", gap = "fast", note = ["offers this instead", "adds another option instead"] },
+  { by = "second", do = "accept", which = "any" },
+]
+
+[plots.withdraw_unanswered]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "2-3", range_chance = 0 },
+  { by = "first", do = "withdraw", gap = "slow" },
+  { by = "first", do = "nudge", gap = "slow", chance = 0.5, note = ["asks whether the others work", "a short ping"] },
+]
+
+# Acceptances that point at one of several offers by its day or place.
+[plots.pick_by_reference]
+weight = 6
+beats = [
+  { by = "first", do = "offer", times = "2-3", range_chance = 0, multi_day_chance = 0 },
+  { by = "second", do = "accept", which = "last", style = "bare" },
+]
+
+[plots.pick_by_reference_later]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "2-3", range_chance = 0, multi_day_chance = 0 },
+  { by = "second", do = "decoy", notes = "hedges" },
+  { by = "first", do = "chat", chance = 0.5, note = ["says no rush", "a thumbs up"] },
+  { by = "second", do = "accept", which = "last", style = "bare", gap = "slow" },
+]
+
+# Declines and counters in other shapes.
+[plots.short_no_but]
+weight = 5
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "offer", times = "1-2", note = ["starting with a short refusal like 'no, but' or 'cant, how about'", "starting with 'nah' and a counter", "starting with 'not then' and offering this"] },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.short_decline_twice]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "decline", notes = "short_declines" },
+  { by = "first", do = "offer", times = "1-2", note = "tries another" },
+  { by = "second", do = "decline", notes = "short_declines" },
+  { by = "first", do = "chat", chance = 0.6, note = ["asks them to suggest something", "says they'll ask the captain"] },
+]
+
+[plots.decline_after_hedge]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "decoy", notes = "hedges" },
+  { by = "second", do = "decline", gap = "slow", notes = "short_declines" },
+  { by = "second", do = "offer", times = "1-2", gap = "fast", chance = 0.6 },
+  { by = "first", do = "accept", which = "last", chance = 0.8 },
+]
+
+[plots.long_decline]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-3" },
+  { by = "second", do = "decline", note = ["explains at length that they're travelling and can't play then, without suggesting any time", "explains a family commitment that rules those out, without suggesting any time", "says sorry, work is crazy and none of those work, without suggesting any time"] },
+  { by = "first", do = "offer", times = "1-2", chance = 0.6, note = "tries other times" },
+  { by = "second", do = "accept", which = "last", chance = 0.6 },
+]
+
+[plots.hedge_then_accept]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "decoy", notes = "hedges" },
+  { by = "first", do = "chat", chance = 0.4, note = ["says ok, no rush", "says let them know"] },
+  { by = "second", do = "accept", which = "any", gap = "slow" },
+]
+
+[plots.hedge_unresolved]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-3" },
+  { by = "second", do = "decoy", notes = "hedges" },
+]
+
+# Times a player can't make, in more places.
+[plots.busy_then_counter]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "offer", times = "1-2", busy_chance = 1.0, note = ["as their own suggestion", "asking whether this works instead"] },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.busy_unresolved]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "busy", near = true, note = ["because of work", "as a short reply, like 'at work until then', in under eight words", "because of a family thing"] },
+]
+
+[plots.busy_first]
+weight = 3
+beats = [
+  { by = "first", do = "busy", note = ["saying when they can't play this week, before any times are suggested", "warning the opponent about a commitment this week"] },
+  { by = "second", do = "offer", times = "1-3", busy_chance = 0 },
+  { by = "first", do = "accept", which = "last" },
+]
+
+# Acknowledgements and chat that accept nothing.
+[plots.ack_not_accept]
+weight = 4
+beats = [
+  { by = "first", do = "chat", note = ["says they'll send some times later today", "says they'll check their schedule and send times", "asks when the opponent is usually free"] },
+  { by = "second", do = "chat", note = ["'ok'", "'sure, no rush'", "'👍'", "says they're mostly free evenings, without naming a day or time"] },
+  { by = "first", do = "offer", times = "1-3", gap = "slow" },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.chatty]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "2-3" },
+  { by = "second", do = "chat", note = ["small talk about last round's game", "asks which opening they play these days", "small talk about the team"] },
+  { by = "first", do = "chat", note = ["answers the small talk", "jokes back"] },
+  { by = "second", do = "accept", which = "any" },
+]
+
+[plots.mutual_idea]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "accept", which = "last", style = "restate", note = ["saying they were about to suggest that same time", "saying great minds think alike"] },
+]
+
+[plots.conditional_accept]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "accept", which = "last", note = ["and asks to start on time as they have to leave after", "saying it works as long as their internet holds up"] },
+]
+
+[plots.late_accept]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "2-3" },
+  { by = "first", do = "nudge", gap = "slow", note = ["asks whether the opponent saw this", "a short ping"] },
+  { by = "second", do = "chat", gap = "slow", note = ["says sorry, they were away", "apologizes for the slow reply"] },
+  { by = "second", do = "accept", which = "any", gap = "fast" },
+]
+
+[plots.both_offer]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "offer", times = "1-2", gap = "fast", note = ["also suggests their own times, without commenting on the opponent's", "says they're free then too"] },
+  { by = "either", do = "accept", which = "last" },
+]
+
+# Vague and relative times: never offers on their own.
+[plots.vague_first]
+weight = 4
+beats = [
+  { by = "first", do = "vague", notes = "vague" },
+  { by = "second", do = "offer", times = "1-3" },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.vague_reply]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "vague", notes = "vague" },
+  { by = "first", do = "offer", times = "1-2", note = ["tries again with that in mind", "offers something that might suit them better"] },
+  { by = "second", do = "accept", which = "last", chance = 0.8 },
+]
+
+[plots.vague_unresolved]
+weight = 2
+beats = [
+  { by = "first", do = "vague", notes = "vague" },
+  { by = "second", do = "vague", notes = "vague" },
+]
+
+[plots.relative_now]
+weight = 4
+beats = [
+  { by = "first", do = "vague", notes = "relative" },
+  { by = "second", do = "decline", note = ["says they can't right now, in a few words", "says not right now, maybe later, without a clock time"] },
+  { by = "second", do = "offer", times = "1-2", gap = "fast", chance = 0.7 },
+  { by = "first", do = "accept", which = "last", chance = 0.8 },
+]
+
+[plots.relative_after_offer]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "vague", notes = "relative" },
+  { by = "first", do = "chat", note = ["says they can't right now", "says they'd rather stick to a scheduled time"] },
+  { by = "second", do = "accept", which = "any", chance = 0.7 },
+]
+
+[plots.pick_loosely]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "2-3", range_chance = 0, multi_day_chance = 0, local_chance = 0 },
+  { by = "second", do = "accept", which = "last", style = "bare", loosely = true, note = ["in a few words", ""] },
+]
+
+[plots.deadline_pressure]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1-3", note = "saying they should hurry as the round is ending" },
+  { by = "second", do = "accept", which = "last" },
+]
+
+# Taking back in the same message as accepting, and cancelling an agreed game.
+[plots.accept_and_withdraw]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "2", range_chance = 0, multi_day_chance = 0 },
+  { by = "second", do = "offer", times = "1-2", note = ["after saying neither works for them", "as their own suggestions"] },
+  { by = "first", do = "accept", which = "last", also_withdraws = true },
+]
+
+[plots.cancelled]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "accept", which = "last" },
+  { by = "first", do = "cancel", gap = "slow", restates = true, note = ["sorry, work came up", "a family thing", "they double-booked"] },
+  { by = "first", do = "offer", times = "1-2", gap = "fast", chance = 0.7, note = "offers other times instead" },
+  { by = "second", do = "accept", which = "last", chance = 0.8 },
+]
+
+[plots.cancelled_quietly]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "accept", which = "last" },
+  { by = "first", do = "cancel", gap = "slow", note = ["something came up", "they're ill"] },
+]
+
+# Shared lists a beat names with `notes`.
+[notes]
+short_declines = [
+  "just 'no', 'nope' or 'nah', nothing else",
+  "'cant' or 'can't', nothing else",
+  "says no in two or three words, like 'no sorry' or 'not for me'",
+  "says they're busy then, in two or three words",
+  "a short no with a sad emoji",
+  "says that doesn't work, in a few words",
+  "says no with a one-word reason, like 'work' or 'exam'",
+  "'negative' or 'no can do'",
+  "says it's too early or too late for them, in a few words",
+]
+
+hedges = [
+  "says 'let me check' and nothing more",
+  "says 'maybe', not sure yet",
+  "says it's probably fine but they need to confirm first",
+  "says 'ok, will check and let you know'",
+  "says they'll ask their family first",
+  "asks for a bit of time to check",
+  "says 'hmm not sure' in a few words",
+]
+vague = [
+  "says they're mostly free on some day's evening, naming the day and part of the day only (like 'free saturday evening')",
+  "says weekends are best for them, without a day or time",
+  "says evenings work best for them this week",
+  "says they're flexible most days, mornings are bad",
+  "says they're free any time tomorrow afternoon, roughly",
+  "says sometime this weekend would be good",
+  "says late evenings their time are best, with no clock time",
+]
+relative = [
+  "asks whether the opponent can play right now",
+  "says they're free now if the opponent wants to play",
+  "asks whether in an hour or so would work, with no clock time",
+  "says they can play in a couple of hours",
+  "asks if they could play later today, with no clock time",
+]
+
+[plots.timeless_accept]
+weight = 4
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "accept", style = "bare", note = ["with only 'see you then'", "with 'see you there' and nothing more", "with 'that works, see you'", "with 'I'll be there'", "with 'locked in'", "with 'done, see you then'", "saying they'll send the challenge then", "agreeing and reminding them the round ends soon, with no clock time", "agreeing and asking them to ping if anything changes"] },
+]
+
+[plots.decline_names_day]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "decline", names_day = true, note = ["says they're away that day, naming the day of the offered time but no clock time", "says they're travelling that day and names the day, no clock time", "says that day is no good for them, naming the day, no clock time"] },
+]
+
+[plots.decline_names_day_counter]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "decline", names_day = true, note = ["says they're away that day, naming the day of the offered time but no clock time", "says they work all day then, naming the day, no clock time"] },
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.range_pick]
+weight = 3
+beats = [
+  { by = "first", do = "offer", times = "1", range_chance = 0.85, multi_day_chance = 0 },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.range_pick_clock]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1", range_chance = 1.0, multi_day_chance = 0 },
+  { by = "second", do = "accept", which = "last", pick_clock_chance = 0.95, note = ["with only the picked time and 'then', like '18:00 then'", "as 'let's do' and the picked time", "as the picked time and 'it is'", "as the picked time and 'works'", "in two or three words around the picked time"] },
+]
+
+[plots.see_you_then]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "accept", style = "bare", note = ["with only the words 'see you then' and nothing else", "with only 'see you there'", "with only 'cya then'", "with only 'see you then!' and an emoji", "with only 'see you on the board'", "with only 'see ya then'"] },
+]
+
+[plots.counter_quoting]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1-3", layout = "inline" },
+  { by = "second", do = "offer", times = "1-2", rejects = true, layout = "inline" },
+  { by = "first", do = "accept", which = "last", chance = 0.7 },
+]
+
+[plots.zoned_offer]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1-2", zone_chance = 0.9, range_chance = 0.1 },
+  { by = "second", do = "accept", which = "last" },
+]
+
+[plots.zoned_counter]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1-2" },
+  { by = "second", do = "offer", times = "1-2", zone_chance = 0.9, range_chance = 0.1, note = "as their own new suggestions, after saying the opponent's times don't work for them" },
+  { by = "first", do = "accept", which = "last" },
+]
+
+[plots.haggle]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "2-3", layout = "inline" },
+  { by = "second", do = "offer", times = "1", rejects = true, layout = "inline" },
+  { by = "first", do = "offer", times = "1", rejects = true, layout = "inline" },
+  { by = "second", do = "offer", times = "1", rejects = true, layout = "inline", chance = 0.5 },
+  { by = "other", do = "accept", which = "last" },
+]
+
+[plots.decline_day_counter]
+weight = 2
+beats = [
+  { by = "first", do = "offer", times = "1" },
+  { by = "second", do = "offer", times = "1-2", names_day = true, note = ["after first saying they can't do that day, naming only the day, in two or three words (like 'can't do sat.')", "after a short 'no, [day] is out' naming only the day", "after saying that day doesn't work, naming only the day"] },
+  { by = "first", do = "accept", which = "last", chance = 0.7 },
+]
+

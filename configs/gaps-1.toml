@@ -1,0 +1,48 @@
+# Aimed at the gaps the v3 model's probes found: a time picked inside a range ("18:00 then"),
+# acceptances that write no time ("see you then"), declines that name the day, times a player
+# can't make, and terse availability messages. Its records join v3 (ids start with "g1-").
+
+[output]
+directory = "data/gaps-1"
+prefix = "g1-"
+
+[threads]
+count = 1050
+seed = 11
+attempts = 3
+others = 0.15
+
+[threads.weights]
+range = 6
+range_pick = 12
+several_days = 3
+pick_loosely = 3
+timeless_accept = 10
+terse_yes = 5
+decline_names_day = 6
+decline_names_day_counter = 6
+short_decline_counter = 6
+short_no_but = 5
+busy_reply = 6
+busy_offer = 6
+busy_then_counter = 4
+busy_first = 4
+busy_unresolved = 3
+
+[commands]
+count = 1500
+seed = 12
+batch = 6
+others = 0.3
+
+[commands.weights]
+available = 8
+unavailable = 8
+availability_url = 3
+rules = 4
+summon_mods = 3
+nomination_url = 2
+source = 2
+
+[review]
+sample = 40
