@@ -1,0 +1,34 @@
+[project]
+name = "chess-league-bot-nlu"
+version = "0.1.0"
+description = "Synthetic data, training and evaluation for a Lichess4545 league chat bot (arboters) language understanding"
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.12"
+# Generation needs gliner2's word splitter to check span boundaries, and importing it loads torch.
+dependencies = [
+    "gliner2[local]==2.1.0",
+    "requests>=2.28",
+]
+
+[dependency-groups]
+# Training and evaluation: GLiNER2's training code. `uv sync --group train`.
+train = ["gliner2[local,train]==2.1.0"]
+dev = ["pytest>=8", "ruff==0.17.4"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["chess_league_bot_nlu"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501", "RUF001", "RUF002", "RUF003"]

@@ -1,0 +1,19 @@
+# A full dataset run. Each thread is attempted up to `attempts` times; command
+# messages are written `batch` at a time. Everything rejected is logged in
+# rejects.jsonl with its reason.
+
+[output]
+directory = "data/generated"
+
+[threads]
+count = 5700
+seed = 1
+attempts = 3
+
+[commands]
+count = 10000
+seed = 2
+batch = 6
+
+[review]
+sample = 30

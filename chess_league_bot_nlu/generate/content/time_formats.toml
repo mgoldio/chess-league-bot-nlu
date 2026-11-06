@@ -1,0 +1,103 @@
+# How players write times. A written time is a pattern (`points`, `ranges` or
+# `open`) filled with a day and a clock. Every form is checked by the resolver
+# before use: a form that could be read as another time is never kept.
+#
+# Every entry is { form, weight?, when?, lower? }: `weight` is how often it is
+# picked (default 1), `when` limits it to dates or times it fits (below), and
+# `lower` is the chance it is written in lowercase.
+#
+# Day fields: {wd} short weekday ("Thu"), {weekday} full ("Thursday"),
+# {day} day of month, {month} month number, {mon} short month ("Nov"),
+# {ordinal} ("12th"). `when` for days: "tomorrow" (the next day), "tonight"
+# (the same day, evening), "day_over_12" (a day/month that can't be read the
+# other way round).
+#
+# Clock fields: {H} hour 0-23, {HH} two digits, {MM} minutes, {h} hour 1-12,
+# {ampm} am/pm. `when` for clocks: "whole_hour". A clock without am/pm reads as
+# a 24-hour time.
+#
+# Pattern fields: {day}, {clock}, {start}/{end} for ranges and open times,
+# {end_day} (the end's weekday, for a range past midnight), and {zone}: where
+# " UTC" or the player's zone goes ("2100 - 2300 UTC on Friday"); without it,
+# the zone is written at the end. `when` for ranges: "overnight" (the range
+# ends on the next day).
+#
+# Top-level keys come first: in TOML, every key after a [table] header belongs
+# to that table.
+
+utc_suffixes = [" utc", " UTC", " (utc)", " Utc", " UTC", " utc"]
+utc_suffix_chance = 0.5      # players mostly say a time is UTC
+weekday_typo_chance = 0.05   # "tursday": kept only if the resolver still reads the same time
+clock_only_chance = 0.4      # a second time on the same day as the one before it gives only its clock ("fri 01:30? 01:45?")
+
+days = [
+  { form = "{wd}", lower = 0.6 },
+  { form = "{weekday}", weight = 2, lower = 0.4 },
+  { form = "{wd} {day}" },
+  { form = "{mon} {day}" },
+  { form = "{day} {mon}" },
+  { form = "the {ordinal}" },
+  { form = "{wd} {day}/{month}", when = "day_over_12" },
+  { form = "{weekday} {mon} {day}", weight = 0.5 },
+  { form = "tmrw", when = "tomorrow" },
+  { form = "tomorrow", when = "tomorrow" },
+  { form = "tonight", when = "tonight" },
+]
+
+# An acceptance that names only the day ("thu works"), and the days of a time
+# offered on several days.
+day_only = [
+  { form = "{wd}", lower = 0.6 },
+  { form = "{weekday}", lower = 0.5 },
+]
+
+# One time on several days: {0}, {1}, {2} are the days, each written from `day_only`.
+several_days = [
+  { form = "{0} or {1}", weight = 4 },
+  { form = "{0}/{1}", weight = 2 },
+  { form = "{0} and {1}" },
+  { form = "{0}, {1} or {2}", weight = 2 },
+  { form = "{0}/{1}/{2}" },
+  { form = "{0}, {1} and {2}" },
+]
+
+clocks = [
+  { form = "{HH}:{MM}", weight = 4 },
+  { form = "{H}", when = "whole_hour", weight = 1.5 },
+  { form = "{H}:{MM}" },
+  { form = "{HH}{MM}", weight = 0.7 },
+  { form = "{HH};{MM}", weight = 0.2 },
+  { form = "{h}{ampm}" },
+  { form = "{h} {ampm}" },
+  { form = "{h}:{MM}{ampm}" },
+  { form = "{H}h", when = "whole_hour" },
+  { form = "{H}h{MM}" },
+]
+
+points = [
+  { form = "{day} {clock}", weight = 3 },
+  { form = "{day} at {clock}" },
+  { form = "{clock} {day}" },
+  { form = "{clock} on {day}" },
+  { form = "{clock}{zone} on {day}" },
+  { form = "{day} @ {clock}" },
+]
+
+ranges = [
+  { form = "{day} {start}-{end}", weight = 3 },
+  { form = "{day} {start} - {end}" },
+  { form = "{start} - {end}{zone} on {day}" },
+  { form = "{day} between {start} and {end}" },
+  { form = "{day} {start} until {end}" },
+  { form = "{day} from {start} to {end}" },
+  { form = "{day} {start} - {end} {end_day}", when = "overnight", weight = 2 },
+  { form = "{day} {start} - {end_day} {end}", when = "overnight" },
+]
+
+open = [
+  { form = "{day} any time after {start}" },
+  { form = "{day} after {start}" },
+  { form = "{day} from {start} on" },
+  { form = "after {start} on {day}" },
+  { form = "{day} from {start}{zone} onwards" },
+]

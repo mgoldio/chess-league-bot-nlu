@@ -1,0 +1,29 @@
+# Values that fill command arguments.
+#
+# A username is one of `username_forms` filled with words from
+# `username_words`: {w} a word, {W} the same capitalized, {w2}/{W2} a second
+# word, {n} a number. With `mention_chance` it is written as a chat mention,
+# @**name**. In `rounds`, `boards` and `subscription_ids`, {n} is a number from 1 to 12.
+
+username_words = [
+  "knight", "rook", "pawn", "queen", "bishop", "tal", "fischer", "gambit", "sicilian", "caro",
+  "endgame", "zugzwang", "blitz", "tempo", "fork", "pin", "castle", "dragon", "najdorf", "morphy",
+]
+username_forms = ["{w}{n}", "{W}_{w2}", "{w}_{w2}{n}", "{W}{W2}", "the_{w}", "{w}lover{n}"]
+mention_chance = 0.25
+
+teams = [
+  "Forking Around", "Pawn Stars", "The Rookies", "Knights Who Say Nf3", "Zugzwang Gang",
+  "Bishop Brigade", "Checkmate Chasers", "En Passant Party",
+]
+leagues = [
+  "team4545", "lonewolf", "chess960", "blitzbattle", "the 45 league", "lone wolf", "45+45", "30+30",
+  "960", "the team league",
+]
+rounds = ["round {n}", "rd {n}", "rd{n}", "next round", "this round", "r{n}"]
+boards = ["board {n}", "brd {n}", "b{n}"]
+subscription_ids = ["{n}", "#{n}"]
+phrases = [
+  "good game", "gg", "who is the arbiter", "when is the deadline", "how do i forfeit", "london system",
+  "sacrifice", "time trouble", "is it rated",
+]

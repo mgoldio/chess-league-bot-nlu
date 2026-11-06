@@ -1,0 +1,132 @@
+# The bot's commands, as the model sees them.
+#
+# `label` is the name the model is given; `description` says what the message
+# is for, and is what the data generator and its verifier work from. A command
+# with `events` also tells the model which event the message is about, as
+# event key = label. How the generator plans each command's arguments is in
+# generate/content/commands.toml.
+
+[help]
+label = "help"
+description = "asks what the bot can do or which commands it knows"
+
+[tell]
+label = "notify about games"
+description = "asks to be notified about games: a player's, a league's, a team's, or their own"
+events = { starts = "game starts", ends = "game ends", scheduled = "game scheduled" }
+
+[subscription_list]
+label = "list subscriptions"
+description = "asks to see the notifications they are subscribed to"
+
+[subscription_remove]
+label = "remove subscription"
+description = "asks to stop or remove one of their notification subscriptions"
+
+[subscribe_teams]
+label = "notify about my team"
+description = "asks to be notified about their own team's games"
+
+[response_add]
+label = "add response"
+description = "a moderator tells the bot to start auto-replying whenever someone says a certain phrase in chat"
+
+[response_list]
+label = "list responses"
+description = "asks the bot to list the phrases it auto-replies to"
+
+[response_remove]
+label = "remove response"
+description = "a moderator tells the bot to stop its auto-reply for a certain chat phrase"
+
+[rating]
+label = "rating"
+description = "asks for a player's lichess rating number, or their own"
+
+[pairing]
+label = "pairing"
+description = "asks about a player's (or their own) current pairing or scheduled game"
+
+[pairings_link]
+label = "pairings link"
+description = "asks for the link to the pairings page"
+
+[standings_link]
+label = "standings"
+description = "asks for the league standings"
+
+[rules]
+label = "rules"
+description = "asks for the league rules or regulations"
+
+[faq]
+label = "faq"
+description = "asks for the league FAQ"
+
+[starter_guide]
+label = "starter guide"
+description = "asks for the starter guide or player handbook"
+
+[captain_guidelines]
+label = "captain guidelines"
+description = "asks what team captains are supposed to do"
+
+[captains]
+label = "captains"
+description = "asks who the team captains are"
+
+[mods]
+label = "moderators"
+description = "asks who the league moderators are"
+
+[summon_mods]
+label = "call moderators"
+description = "asks to get a moderator's attention or call the mods"
+
+[nomination_url]
+label = "nomination link"
+description = "asks for the link to nominate games, for example for game of the round"
+
+[notification_url]
+label = "notification settings link"
+description = "asks for the link to their notification settings"
+
+[availability_url]
+label = "availability link"
+description = "asks for the link to update their availability"
+
+[link_accounts]
+label = "link accounts"
+description = "asks to link their chat account with their lichess account"
+
+[available]
+label = "available"
+description = "says they can play a round"
+
+[unavailable]
+label = "unavailable"
+description = "says they can't play a round"
+
+[assign_alternate]
+label = "assign alternate"
+description = "a captain or moderator asks the bot to put a named alternate (substitute) player on a team board for a round"
+
+[unassign_alternate]
+label = "unassign alternate"
+description = "a captain or moderator asks the bot to take back an alternate (substitute) assignment from a team board"
+
+[source]
+label = "source code"
+description = "asks where the bot's source code is"
+
+[version]
+label = "version"
+description = "asks which version of the bot is running"
+
+[uptime]
+label = "uptime"
+description = "asks how long the bot has been running"
+
+[none]
+label = "none"
+description = "not a request the bot can act on"

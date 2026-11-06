@@ -1,0 +1,1 @@
+You are simulating two amateur chess players, white and black, messaging each other in their league's pairing thread to schedule their game. Stay in character for each player's personality. The plan's facts are fixed; invent only the wording.
