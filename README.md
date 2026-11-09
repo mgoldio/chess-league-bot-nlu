@@ -5,7 +5,7 @@ Language understanding for a chess league chat bot (built for
 asks for, and which game times players offer, accept and withdraw in a pairing
 thread. This repository makes the synthetic training data and trains and
 evaluates the model: [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M)
-with small fixed heads in place of its word head. What the bot does with the
+with small trained heads in place of its word head. What the bot does with the
 model's answers (resolving times, announcing agreements, league rules) lives in
 arboters.
 
@@ -14,6 +14,28 @@ nothing generated is committed here:
 
 - dataset: [Lichess4545/chess-league-bot-nlu](https://huggingface.co/datasets/Lichess4545/chess-league-bot-nlu)
 - model: [Lichess4545/chess-league-bot-nlu](https://huggingface.co/Lichess4545/chess-league-bot-nlu)
+
+## Try the model
+
+With nothing installed but [uv](https://docs.astral.sh/uv/), and no clone of
+this repository:
+
+```sh
+uv run https://huggingface.co/Lichess4545/chess-league-bot-nlu/resolve/main/read.py command "ping me when knight42 starts"
+# tell (100%), event starts
+#   player: knight42
+uv run https://huggingface.co/Lichess4545/chess-league-bot-nlu/resolve/main/read.py thread "white: thu 19:00 or sat 14:00?" "black: sat works"
+# white writes 'thu 19:00': offered
+# white writes 'sat 14:00': offered
+# black writes 'sat': accepted
+# black accepts 'sat 14:00'
+```
+
+The first run downloads the model and its dependencies. On Linux, add
+`--index https://download.pytorch.org/whl/cpu` for the much smaller CPU-only
+torch. The script is `publish/model/read.py`; `MODEL=runs/publish/model`
+points it at a model staged for publishing (see [Publishing](#publishing))
+instead of the published one.
 
 ## Two tasks handled by the model
 

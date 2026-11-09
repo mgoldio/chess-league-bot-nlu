@@ -98,6 +98,7 @@ def stage_model(where: Path, evaluation: Path) -> None:
     for name in ("model.safetensors", "config.json", "tokenizer.json", "tokenizer_config.json"):
         shutil.copy(where / name, MODEL / name)
     shutil.copy(CARDS / "model" / "reader.py", MODEL / "reader.py")
+    shutil.copy(CARDS / "model" / "read.py", MODEL / "read.py")
     shutil.copy(CARDS / "model" / "README.md", MODEL / "README.md")
     settings = json.loads((where / "training.json").read_text())
     (MODEL / "training.json").write_text(json.dumps(training(settings), indent=2) + "\n")
