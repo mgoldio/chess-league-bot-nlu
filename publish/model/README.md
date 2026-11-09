@@ -37,6 +37,7 @@ which is fully synthetic. Code:
 
 - `reader.py`: the whole model as code, about 200 lines of PyTorch: load it,
   read a thread or a command. It is the reference for everything below.
+- `read.py`: a command-line script that reads a command or a thread with it.
 - `model.safetensors`: every weight: the trunk's under `trunk.` (a
   `LlamaModel`, 30 layers, hidden size 576), the heads' by their own names.
 - `config.json`: the trunk's Llama config under `trunk`, and the heads'
@@ -47,6 +48,23 @@ which is fully synthetic. Code:
 - `evaluation/test.json`: scores on the dataset's test split.
 
 ## Use
+
+To try it, with nothing installed but [uv](https://docs.astral.sh/uv/):
+
+```sh
+uv run https://huggingface.co/Lichess4545/chess-league-bot-nlu/resolve/main/read.py command "ping me when knight42 starts"
+# tell (100%), event starts
+#   player: knight42
+uv run https://huggingface.co/Lichess4545/chess-league-bot-nlu/resolve/main/read.py thread "white: thu 19:00 or sat 14:00?" "black: sat works"
+# white writes 'thu 19:00': offered
+# white writes 'sat 14:00': offered
+# black writes 'sat': accepted
+# black accepts 'sat 14:00'
+```
+
+The first run downloads the model and its dependencies; on Linux, adding
+`--index https://download.pytorch.org/whl/cpu` installs the much smaller
+CPU-only torch. From Python:
 
 ```python
 import sys
